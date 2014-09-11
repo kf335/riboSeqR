@@ -1,4 +1,4 @@
-Package: riboSeq
+Package: riboSeqR
 Type: Package
 Title: Analysis of sequencing data from ribosome profiling experiments.
 Description: Plotting functions, frameshift detection and parsing of sequencing
