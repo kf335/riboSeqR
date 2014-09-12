@@ -31,7 +31,7 @@ Ribosome profiling extracts those parts of a coding sequence currently bound by 
 Begin by loading the riboSeq library.
 
 <<>>=
-library(riboSeq)
+library(riboSeqR)
 @
 
 Identify the data directory for the example data. 
