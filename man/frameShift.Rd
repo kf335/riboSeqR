@@ -1,6 +1,5 @@
 \name{readingFrame}
 \alias{readingFrame}
-\alias{frameShift}
 \alias{plotFS}
 \title{
 Analyses frame called ribosome footprint data within coding sequences

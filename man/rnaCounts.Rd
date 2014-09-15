@@ -59,12 +59,15 @@ fastaCDS <- findCDS(fastaFile = chlamyFasta,
 # frame calling
 fCs <- frameCounting(riboDat, fastaCDS)
 
+# analysis of frame shift for 27 and 28-mers.
+fS <- readingFrame(rC = fCs, lengths = 27:28)
+
 # filter coding sequences. 27-mers are principally in the 0-frame,
 # 28-mers are principally in the 2-frame relative to coding start (see
 # readingFrame function).
 
-ffCs <- filterHits(fCs, lengths = c(27, 28), frames = c(0, 2), 
-                   hitMean = 50, unqhitMean = 10)
+ffCs <- filterHits(fCs, lengths = c(27, 28), frames = list(0, 2), 
+                   hitMean = 50, unqhitMean = 10, fS = fS)
 
 # Extract counts of RNA hits from riboCount data.
 rnaCounts <- rnaCounts(riboDat, ffCs@CDS)

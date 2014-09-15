@@ -31,7 +31,7 @@ Ribosome profiling extracts those parts of a coding sequence currently bound by 
 Begin by loading the riboSeq library.
 
 <<>>=
-library(riboSeqR)
+library(riboSeq)
 @
 
 Identify the data directory for the example data. 
@@ -90,7 +90,7 @@ plotFS(fS)
 These can be filtered on the mean number of hits and unique hits within replicate groups to give plausible candidates for coding. Filtering can be limited to given lengths and frames, which may be inferred from the output of the \Rfunction{readingFrame} function.
 
 <<>>=
-ffCs <- filterHits(fCs, lengths = c(27, 28), frames = list(0, 2), 
+ffCs <- filterHits(fCs, lengths = c(27, 28), frames = list(1, 0), 
                    hitMean = 50, unqhitMean = 10)
 @ 
 

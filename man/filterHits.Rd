@@ -14,7 +14,8 @@ number of unique sequences aligning in at least one replicate group (to
 exclude single stacks of sequenced reads passing the filtering).
 }
 \usage{
-filterHits(fCs, lengths = 27, frames, hitMean = 10, unqhitMean = 1)
+filterHits(fCs, lengths = 27, frames, hitMean = 10, unqhitMean = 1,
+ratioCheck = TRUE, fS)
 }
 \arguments{
   \item{fCs}{
@@ -38,13 +39,30 @@ filterHits(fCs, lengths = 27, frames, hitMean = 10, unqhitMean = 1)
     The mean number of unique sequences within a replicate group that
     should be observed to pass filtering. This parameter is intended to
     avoid cases where a coding sequence is deemed to be expressed based
-    on a few highly expressed sequences.
-}
+    on a few highly expressed sequences.    
+  }
+  \item{ratioCheck}{
+    Checks the ratios of expected phase to maximal phase within the
+    putative coding sequence. See Details.
+  }
+  \item{fS}{
+    The output of 'frameCounting' function. Required if 'ratioCheck = TRUE'.
+  }
 }
 \details{
   Frames can be given as a single vector (which specifies the frames
   used for all lengths of footprints, or as a list, specifying the frame
-  for each length given in `lengths'.  
+  for each length given in `lengths'.
+
+  For highly translated coding regions, the small proportion of
+  out-of-phase reads may cause overlapping but out-of-phase putative
+  coding regions to pass this filtering step. If 'ratioCheck = TRUE',
+  filterHits identifies those cases where the phase with the maximum
+  number of reads (the maximal phase) is not the expected phase for that
+  putative coding region. If the ratio of reads in the expected phase to
+  maximal phase does not significantly (Chi-squared test with
+  significance threshold of 0.05) exceed that ratio observed for all
+  coding regions, the putative coding region is filtered out.
 }
 \value{
   \code{riboCoding} object containing the filtered coding sequences and
@@ -77,12 +95,15 @@ fastaCDS <- findCDS(fastaFile = chlamyFasta,
 # frame calling
 fCs <- frameCounting(riboDat, fastaCDS)
 
+# analysis of frame shift for 27 and 28-mers.
+fS <- readingFrame(rC = fCs, lengths = 27:28)
+
 # filter coding sequences. 27-mers are principally in the 0-frame,
 # 28-mers are principally in the 2-frame relative to coding start (see
 # readingFrame function).
 
 ffCs <- filterHits(fCs, lengths = c(27, 28), frames = list(0, 2), 
-                   hitMean = 50, unqhitMean = 10)
+                   hitMean = 50, unqhitMean = 10, fS = fS)
 
 
 }
