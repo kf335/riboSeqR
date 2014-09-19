@@ -5,7 +5,7 @@
 
 \usepackage{subfig}
 
-\title{riboSeq}
+\title{riboSeqR}
 \author{Thomas J. Hardcastle, Betty Y.W. Chung}
 
 <<<style-Sweave, eval=TRUE, echo=FALSE, results=tex>>=
@@ -24,20 +24,20 @@ Ribosome profiling extracts those parts of a coding sequence currently bound by 
 
 \section*{Getting Data}
 
-\verb'riboSeq' currently reads alignment data from flat text files that contain (as a minimum), the sequence of the read, the name of the sequence to which the read aligns, the strand to which it aligns, and the starting position of alignment. A \software{Bowtie} alignment (note that \software{Bowtie}, rather than \software{Bowtie2}, is recommended for short reads, which ribosome footprints are) using the option ``--suppress 1,6,7,8'' will generate this minimal data. It is by default assumed that the data are generated in this way, and the default columns specification for the default \Rfunction{readRibodata} function (see below) reflects this.
+\verb'riboSeqR' currently reads alignment data from flat text files that contain (as a minimum), the sequence of the read, the name of the sequence to which the read aligns, the strand to which it aligns, and the starting position of alignment. A \software{Bowtie} alignment (note that \software{Bowtie}, rather than \software{Bowtie2}, is recommended for short reads, which ribosome footprints are) using the option ``--suppress 1,6,7,8'' will generate this minimal data. It is by default assumed that the data are generated in this way, and the default columns specification for the default \Rfunction{readRibodata} function (see below) reflects this.
 
 \section*{Workflow Example}
 
-Begin by loading the riboSeq library.
+Begin by loading the riboSeqR library.
 
 <<>>=
-library(riboSeq)
+library(riboSeqR)
 @
 
 Identify the data directory for the example data. 
 
 <<>>=
-datadir <- system.file("extdata", package = "riboSeq")
+datadir <- system.file("extdata", package = "riboSeqR")
 @ 
 
 The \Rfunction{fastaCDS} function can be used to guess at potential coding sequences from a (possibly compressed; see \Rfunction{base::file}) fasta file containing mRNA transcripts (note; do not use this on a genome!). These can also be loaded into a \Rclass{GRanges} object from an annotation file.
