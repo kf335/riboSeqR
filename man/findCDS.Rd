@@ -31,7 +31,7 @@ findCDS(fastaFile, startCodon = c("ATG"), stopCodon = c("TAG", "TAA", "TGA"))
 }
 
 \examples{
-datadir <- system.file("extdata", package = "riboSeq")
+datadir <- system.file("extdata", package = "riboSeqR")
 chlamyFasta <- paste(datadir, "/rsem_chlamy236_deNovo.transcripts.fa", sep = "")
 fastaCDS <- findCDS(fastaFile = chlamyFasta, 
                     startCodon = c("ATG"), 

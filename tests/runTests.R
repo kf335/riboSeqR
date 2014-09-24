@@ -1,1 +1,1 @@
-BiocGenerics:::testPackage("riboSeq")
+BiocGenerics:::testPackage("riboSeqR")

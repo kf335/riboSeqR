@@ -55,7 +55,7 @@ Thomas J. Hardcastle
 }
 \examples{
 #ribosomal footprint data
-datadir <- system.file("extdata", package = "riboSeq")
+datadir <- system.file("extdata", package = "riboSeqR")
 ribofiles <- paste(datadir, 
                    "/chlamy236_plus_deNovo_plusOnly_Index", c(17,3,5,7), sep = "")
 rnafiles <- paste(datadir, 
