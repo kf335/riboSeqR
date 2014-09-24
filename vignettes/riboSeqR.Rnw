@@ -1,5 +1,5 @@
-%\VignetteIndexEntry{riboSeq}
-%\VignettePackage{riboSeq}
+%\VignetteIndexEntry{riboSeqR}
+%\VignettePackage{riboSeqR}
 
 \documentclass[a4paper]{article}
 
