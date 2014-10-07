@@ -95,30 +95,33 @@ ffCs <- filterHits(fCs, lengths = c(27, 28), frames = list(1, 0),
 @ 
 
 We can plot the total alignment at the 5' and 3' ends of coding sequences using the \Rfunction{plotCDS} function. The frames are colour coded; frame-0 is red, frame-1 is green, frame-2 is blue. 
-<<<<fig = FALSE, label=plotcds27, height = 10, width = 12>>=
+<<<<fig = FALSE, label=plotcds27, height = 6, width = 8>>=
 plotCDS(coordinates = ffCs@CDS, riboDat = riboDat, lengths = 27)
 @ 
 Note the frameshift for 28-mers.
-<<<<fig = FALSE, label=plotcds28, height = 10, width = 12>>=
+<<<<fig = FALSE, label=plotcds28, height = 6, width = 8>>=
 plotCDS(coordinates = ffCs@CDS, riboDat = riboDat, lengths = 28)
 @ 
 
 \begin{figure}[!ht]
 \centering
-  \subfloat{
 <<label=figcds27, fig=TRUE,echo=FALSE>>=
 <<plotcds27>>
 @ 
 \label{fig:cds27}
-}
-  \subfloat{
+\caption{Average alignment of 27-mers to 5' and 3' ends of coding sequences.}
+\end{figure}
+
+
+\begin{figure}[!ht]
+\centering
 <<label=figcds28, fig=TRUE,echo=FALSE>>=
 <<plotcds28>>
 @ 
-  \label{fig:cds28}
-  }
-\caption{Sum alignment of 27-mers to 5' and 3' ends of coding sequences.}
+\label{fig:cds28}
+\caption{Average alignment of 28-mers to 5' and 3' ends of coding sequences.}
 \end{figure}
+
 
 
 We can plot the alignment over an individual transcript sequence using the \Rfunction{plotTranscript} function. Observe that one CDS (on the right) contains the 27s in the same phase as the CDS (they are both red) while the putative CDSes to the left are not in phase with the aligned reads, suggesting either a sequence error in the transcript or a misalignment. The coverage of RNA sequenced reads is shown as a black curve (axis on the right).
@@ -154,13 +157,15 @@ These data may be used in an analysis of differential translation through compar
 <<>>=
 library(baySeq)
 
-pD <- new("pairedData", replicates = ffCs@replicates, 
-          data = riboCounts, pairData = rnaCounts, 
+pD <- new("countData", replicates = ffCs@replicates, 
+          data = list(riboCounts, rnaCounts),
           groups = list(NDT = c(1,1,1,1), DT = c("WT", "WT", "M", "M")),
-          annotation = as.data.frame(ffCs@CDS))
+          annotation = as.data.frame(ffCs@CDS),
+          densityFunction = bbDensity)
 libsizes(pD) <- getLibsizes(pD)
-pD <- getPriors.BB(pD, cl = NULL)
-pD <- getLikelihoods.BB(pD, cl = NULL)
+
+pD <- getPriors(pD, cl = NULL)
+pD <- getLikelihoods(pD, cl = NULL)
 topCounts(pD, "DT", normaliseData = TRUE)
 @
 
