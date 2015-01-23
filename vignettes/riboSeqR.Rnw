@@ -60,7 +60,7 @@ rnafiles <- paste(datadir,
 The aligned ribosomal (and RNA) data can be read in using the \Rfunction{readRibodata} function. The columns can be specified as a parameter of the \Rfunction{readRibodata} function if the data in the alignment files are differently arranged.
 
 <<>>=
-riboDat <- readRibodata(ribofiles, rnafiles, replicates = c("WT", "WT", "M", "M"))
+riboDat <- readRibodata(ribofiles, replicates = c("WT", "WT", "M", "M"))
 @ 
 
 The alignments can be assigned to frames relative to the coding coordinates with the \Rfunction{frameCounting} function.
@@ -91,7 +91,7 @@ These can be filtered on the mean number of hits and unique hits within replicat
 
 <<>>=
 ffCs <- filterHits(fCs, lengths = c(27, 28), frames = list(1, 0), 
-                   hitMean = 50, unqhitMean = 10)
+                   hitMean = 50, unqhitMean = 10, fS = fS)
 @ 
 
 We can plot the total alignment at the 5' and 3' ends of coding sequences using the \Rfunction{plotCDS} function. The frames are colour coded; frame-0 is red, frame-1 is green, frame-2 is blue. 

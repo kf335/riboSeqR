@@ -3,7 +3,13 @@
     positiveOnly = TRUE
     if(missing(seqnames)) seqnames <- NULL
     GRLs <- lapply(filenames, function(file) {
-      fdat <- read.delim(file, as.is = TRUE, header = header)[,columns]
+      if(length(grep("\\.(bam|BAM)$", file)) > 0) {
+        x <- scanBam(file)
+        fdat <- data.frame(strand = x[[1]]$strand, seqname = x[[1]]$rname, start = x[[1]]$pos, sequence = I(as.character(x[[1]]$seq)))
+        fdat <- fdat[!is.na(fdat[,2]),]
+      } else {
+        fdat <- read.delim(file, as.is = TRUE, header = header)[,columns]
+      }
       if(positiveOnly) fdat <- fdat[fdat[,1] == "+",]
       if(!is.null(seqnames)) {
         fdat <- fdat[fdat[,2] %in% seqnames,]
@@ -14,6 +20,7 @@
                seqnames = factor(fdat[,2], levels = fsn),
                IRanges(start = fdat[,3] + as.integer(zeroIndexed), width = nchar(fdat[,4])),
                strand = fdat[,1])
+      
       
       message(".", appendLF = FALSE)
       GRL

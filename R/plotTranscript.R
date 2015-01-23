@@ -50,7 +50,7 @@ function(transcript, coordinates, annotation, riboData, length = 27, frameShift 
       covmRNA <- riboData@rnaGR[[ii]]
       cov <- coverage(covmRNA[which(as.character(seqnames(covmRNA)) == transcript)])
       cov <- as.integer(cov[[which(names(cov) == transcript)]])      
-    }
+    } else cov <- 0
 
     
 
