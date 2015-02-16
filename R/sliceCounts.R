@@ -18,5 +18,6 @@ function(rC, lengths = 27, frames) {
 }
 
 rnaCounts <- function(riboDat, CDS) {
-  z <- do.call("cbind", lapply(riboDat@rnaGR, function(x) table(subjectHits(findOverlaps(x, CDS)))))
+  z <- do.call("cbind", lapply(riboDat@rnaGR, function(x) table(factor(subjectHits(findOverlaps(x,CDS)), levels = 1:length(CDS)))))
+#z <- do.call("cbind", lapply(riboDat@rnaGR, function(x) table(subjectHits(findOverlaps(x, CDS)))))
 }
