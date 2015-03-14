@@ -1,0 +1,275 @@
+%\VignetteIndexEntry{riboSeqR}
+%\VignettePackage{riboSeqR}
+
+\documentclass[a4paper]{article}
+
+\usepackage{subfig}
+
+\title{riboSeqR}
+\author{Thomas J. Hardcastle, Betty Y.W. Chung}
+
+\RequirePackage{/home/bioinf/tjh48/R/x86_64-unknown-linux-gnu-library/3.1/BiocStyle/resources/latex/Bioconductor}
+
+\AtBeginDocument{\bibliographystyle{/home/bioinf/tjh48/R/x86_64-unknown-linux-gnu-library/3.1/BiocStyle/resources/latex/unsrturl}}
+\usepackage{Sweave}
+\begin{document}
+
+
+
+\maketitle
+
+\section*{Introduction}
+
+Ribosome profiling extracts those parts of a coding sequence currently bound by a ribosome (and thus, are likely to be undergoing translation). Ribosomes typically cover between 20-30 bases of the mRNA (dependant on conformational changes) and move along the mRNA three bases at a time. Sequenced reads of a given length are thus likely to lie predominantly in a single frame relative to the start codon of the coding sequence. This package presents a set of methods for parsing ribosomal profiling data from multiple samples and aligned to coding sequences, inferring frameshifts, and plotting the average and transcript-specific behaviour of these data. Methods are also provided for extracting the data in a suitable form for differential translation analysis.
+
+\section*{Getting Data}
+
+\verb'riboSeqR' currently reads alignment data from flat text files that contain (as a minimum), the sequence of the read, the name of the sequence to which the read aligns, the strand to which it aligns, and the starting position of alignment. A \software{Bowtie} alignment (note that \software{Bowtie}, rather than \software{Bowtie2}, is recommended for short reads, which ribosome footprints are) using the option ``--suppress 1,6,7,8'' will generate this minimal data. It is by default assumed that the data are generated in this way, and the default columns specification for the default \Rfunction{readRibodata} function (see below) reflects this.
+
+\section*{Workflow Example}
+
+Begin by loading the riboSeqR library.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(riboSeqR)
+\end{Sinput}
+\end{Schunk}
+
+Identify the data directory for the example data. 
+
+\begin{Schunk}
+\begin{Sinput}
+> datadir <- system.file("extdata", package = "riboSeqR")
+\end{Sinput}
+\end{Schunk}
+
+The \Rfunction{fastaCDS} function can be used to guess at potential coding sequences from a (possibly compressed; see \Rfunction{base::file}) fasta file containing mRNA transcripts (note; do not use this on a genome!). These can also be loaded into a \Rclass{GRanges} object from an annotation file.
+
+\begin{Schunk}
+\begin{Sinput}
+> chlamyFasta <- paste(datadir, "/rsem_chlamy236_deNovo.transcripts.fa", sep = "")
+> fastaCDS <- findCDS(fastaFile = chlamyFasta, 
++                     startCodon = c("ATG"), 
++                     stopCodon = c("TAG", "TAA", "TGA"))
+\end{Sinput}
+\end{Schunk}
+
+The ribosomal and RNA (if available) alignment files are specified.
+\begin{Schunk}
+\begin{Sinput}
+> ribofiles <- paste(datadir, 
++                    "/chlamy236_plus_deNovo_plusOnly_Index", c(17,3,5,7), sep = "")
+> rnafiles <- paste(datadir, 
++                   "/chlamy236_plus_deNovo_plusOnly_Index", c(10,12,14,16), sep = "")
+\end{Sinput}
+\end{Schunk}
+
+The aligned ribosomal (and RNA) data can be read in using the \Rfunction{readRibodata} function. The columns can be specified as a parameter of the \Rfunction{readRibodata} function if the data in the alignment files are differently arranged.
+
+\begin{Schunk}
+\begin{Sinput}
+> riboDat <- readRibodata(ribofiles, rnafiles, replicates = c("WT", "WT", "M", "M"))
+\end{Sinput}
+\end{Schunk}
+
+The alignments can be assigned to frames relative to the coding coordinates with the \Rfunction{frameCounting} function.
+
+\begin{Schunk}
+\begin{Sinput}
+> fCs <- frameCounting(riboDat, fastaCDS)
+\end{Sinput}
+\end{Schunk}
+
+The predominant reading frame, relative to coding start, can be estimated from the frame calling (or from a set of coordinates and alignment data) for each n-mer. The weighting decribes the proportion of n-mers fitting with the most likely frameshift. The reading frame can also be readily visualised using the \Rfunction{plotFS} function.
+
+\begin{Schunk}
+\begin{Sinput}
+> fS <- readingFrame(rC = fCs); fS
+\end{Sinput}
+\begin{Soutput}
+           26    27    28   29   30
+         1030  8261 16355 2379 1346
+         2847 36011  3582 1634  436
+         3352  1687  3331  701  609
+frame.ML    2     1     0    0    0
+\end{Soutput}
+\begin{Sinput}
+> plotFS(fS)
+\end{Sinput}
+\end{Schunk}
+
+\begin{figure}[!ht]
+\begin{center}
+\begin{Schunk}
+\begin{Soutput}
+           26    27    28   29   30
+         1030  8261 16355 2379 1346
+         2847 36011  3582 1634  436
+         3352  1687  3331  701  609
+frame.ML    2     1     0    0    0
+\end{Soutput}
+\end{Schunk}
+\includegraphics{riboSeqR-frameshift}
+\caption{Number of n-mers in each frame relative to coding start. 27-mers are predominantly in frame-1, while 28-mers are chiefly in frame-0.}
+\label{fig:frameshift}
+\end{center}
+\end{figure}
+
+
+These can be filtered on the mean number of hits and unique hits within replicate groups to give plausible candidates for coding. Filtering can be limited to given lengths and frames, which may be inferred from the output of the \Rfunction{readingFrame} function.
+
+\begin{Schunk}
+\begin{Sinput}
+> ffCs <- filterHits(fCs, lengths = c(27, 28), frames = list(1, 0), 
++                    hitMean = 50, unqhitMean = 10, fS = fS)
+\end{Sinput}
+\end{Schunk}
+
+We can plot the total alignment at the 5' and 3' ends of coding sequences using the \Rfunction{plotCDS} function. The frames are colour coded; frame-0 is red, frame-1 is green, frame-2 is blue. 
+\begin{Schunk}
+\begin{Sinput}
+> plotCDS(coordinates = ffCs@CDS, riboDat = riboDat, lengths = 27)
+\end{Sinput}
+\end{Schunk}
+Note the frameshift for 28-mers.
+\begin{Schunk}
+\begin{Sinput}
+> plotCDS(coordinates = ffCs@CDS, riboDat = riboDat, lengths = 28)
+\end{Sinput}
+\end{Schunk}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics{riboSeqR-figcds27}
+\label{fig:cds27}
+\caption{Average alignment of 27-mers to 5' and 3' ends of coding sequences.}
+\end{figure}
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics{riboSeqR-figcds28}
+\label{fig:cds28}
+\caption{Average alignment of 28-mers to 5' and 3' ends of coding sequences.}
+\end{figure}
+
+
+
+We can plot the alignment over an individual transcript sequence using the \Rfunction{plotTranscript} function. Observe that one CDS (on the right) contains the 27s in the same phase as the CDS (they are both red) while the putative CDSes to the left are not in phase with the aligned reads, suggesting either a sequence error in the transcript or a misalignment. The coverage of RNA sequenced reads is shown as a black curve (axis on the right).
+\begin{Schunk}
+\begin{Sinput}
+> plotTranscript("CUFF.37930.1", coordinates = ffCs@CDS, 
++                riboData = riboDat, length = 27, cap = 200)               
+\end{Sinput}
+\begin{Soutput}
+NULL
+\end{Soutput}
+\end{Schunk}
+
+\begin{figure}[!ht]
+\begin{center}
+\begin{Schunk}
+\begin{Soutput}
+NULL
+\end{Soutput}
+\end{Schunk}
+\includegraphics{riboSeqR-figtran}
+\caption{Alignment to individual transcript.}
+\label{fig:trans}
+\end{center}
+\end{figure}
+
+We can extract the counts from a \Rclass{riboCoding} object using the \Rfunction{sliceCounts} function
+
+\begin{Schunk}
+\begin{Sinput}
+> riboCounts <- sliceCounts(ffCs, lengths = c(27, 28), frames = list(0, 2))
+\end{Sinput}
+\end{Schunk}
+
+Counts for RNA-sequencing can be extracted using from the riboData object and the coding coordinates using the \Rfunction{rnaCounts} function. This is a relatively crude counting function, and alternatives have been widely described in the literature on mRNA-Seq.
+
+\begin{Schunk}
+\begin{Sinput}
+> rnaCounts <- rnaCounts(riboDat, ffCs@CDS)
+\end{Sinput}
+\end{Schunk}
+
+These data may be used in an analysis of differential translation through comparison with the RNA-seq data. See the description of a beta-binomial analysis in the \Biocpkg{baySeq} vignettes for further details.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(baySeq)
+> pD <- new("countData", replicates = ffCs@replicates, 
++           data = list(riboCounts, rnaCounts),
++           groups = list(NDT = c(1,1,1,1), DT = c("WT", "WT", "M", "M")),
++           annotation = as.data.frame(ffCs@CDS),
++           densityFunction = bbDensity)
+> libsizes(pD) <- getLibsizes(pD)
+> pD <- getPriors(pD, cl = NULL)
+> pD <- getLikelihoods(pD, cl = NULL)
+\end{Sinput}
+\begin{Soutput}
+.
+\end{Soutput}
+\begin{Sinput}
+> topCounts(pD, "DT", normaliseData = TRUE)
+\end{Sinput}
+\begin{Soutput}
+             seqnames start  end width strand frame    WT.1    WT.2     M.1      M.2
+1         CUFF.9523.1    78 1040   963      *     2  98:526 135:490 569:501  320:472
+2  Cre16.g684650.t1.2    97 1917  1821      *     0    5:39    0:42    0:35    64:56
+3           g17763.t1    78 2981  2904      *     2   33:50   14:54   53:46   115:53
+4  Cre17.g723750.t1.3   516  638   123      *     2   33:10   28:10    0:10     0:13
+5        CUFF.37930.1   132 1151  1020      *     2 299:157 255:205 356:155  716:186
+6  Cre06.g281600.t1.2   416 2917  2502      *     1 348:362 149:454 213:193  473:559
+7        CUFF.28790.1   165  530   366      *     2   27:28   14:30    0:29     0:31
+8        CUFF.34006.1  1182 2892  1711      *     2   33:22   28:18   18:23     0:31
+9        CUFF.37930.1  1507 3231  1725      *     0 674:239 461:311 782:200 1292:307
+10       CUFF.43770.1    62  441   380      *     1   38:51    0:59   36:48    38:58
+   Likelihood ordering    FDR.DT   FWER.DT
+1   0.8436800     M>WT 0.1563200 0.1563200
+2   0.4757487     M>WT 0.3402856 0.5986203
+3   0.4496892     M>WT 0.4102940 0.8195039
+4   0.4406215     WT>M 0.4475651 0.9204695
+5   0.3099898     M>WT 0.4960541 0.9753464
+6   0.2913775     M>WT 0.5314822 0.9928165
+7   0.2455935     WT>M 0.5633285 0.9982358
+8   0.2273363     WT>M 0.5894954 0.9995989
+9   0.2208159     M>WT 0.6105719 0.9999114
+10  0.1795513     M>WT 0.6315596 0.9999841
+\end{Soutput}
+\end{Schunk}
+
+\section*{Session Info}
+
+\begin{Schunk}
+\begin{Sinput}
+> sessionInfo()
+\end{Sinput}
+\begin{Soutput}
+R version 3.1.2 (2014-10-31)
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+locale:
+ [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C               LC_TIME=en_GB.UTF-8       
+ [4] LC_COLLATE=en_GB.UTF-8     LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+ [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
+[10] LC_TELEPHONE=C             LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets  methods  
+[9] base     
+
+other attached packages:
+[1] baySeq_2.1.14         perm_1.0-0.0          riboSeqR_1.0.2       
+[4] abind_1.4-0           GenomicRanges_1.17.48 GenomeInfoDb_1.1.26  
+[7] IRanges_1.99.32       S4Vectors_0.2.8       BiocGenerics_0.11.5  
+
+loaded via a namespace (and not attached):
+[1] BiocStyle_1.3.15 tools_3.1.2      XVector_0.5.8   
+\end{Soutput}
+\end{Schunk}
+
+\end{document}
