@@ -1,4 +1,4 @@
-vignettes/riboSeqR-figcds28.pdf
-vignettes/riboSeqR-figtran.pdf
 vignettes/riboSeqR-frameshift.pdf
 vignettes/riboSeqR-figcds27.pdf
+vignettes/riboSeqR-figcds28.pdf
+vignettes/riboSeqR-figtran.pdf
