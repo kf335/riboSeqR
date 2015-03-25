@@ -13,7 +13,7 @@ simultaneously be plotted and colour coded under the same scheme.
 }
 \usage{
 plotTranscript(transcript, coordinates, annotation, riboData, length =
-27, frameShift = 0, cap, riboScale, rnaScale, baseLim, main, note = "", ...)
+27, frameShift = 0, cap, riboScale, rnaScale, xlim, main, note = "", ...)
 }
 \arguments{
   \item{transcript}{
@@ -46,7 +46,7 @@ plotTranscript(transcript, coordinates, annotation, riboData, length =
   \item{rnaScale}{
     Scale to be used on the RNA-seq coverage axis.
   }
-  \item{baseLim}{
+  \item{xlim}{
     Limits of the bases of the transcript to be plotted (i.e., the
     x-axis). If missing, the full transcript will be plotted.
   }

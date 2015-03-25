@@ -1,5 +1,5 @@
 plotTranscript <-
-function(transcript, coordinates, annotation, riboData, length = 27, frameShift = 0, cap, riboScale, rnaScale, baseLim, main, note = "", ...) {
+function(transcript, coordinates, annotation, riboData, length = 27, frameShift = 0, cap, riboScale, rnaScale, xlim, main, note = "", ...) {
 #  refseq <- solveMatch$refseq[solveMatch[,1] == transcript]
 #  annotation <- solveMatch$annotation[solveMatch[,1] == transcript]
 
@@ -19,9 +19,7 @@ function(transcript, coordinates, annotation, riboData, length = 27, frameShift 
     })))
   }
   
-
   if(!missing(coordinates)) transceiling <- max(c(transceiling, end(coordinates)[as.character(seqnames(coordinates)) == transcript]))
-  
   
   for(ii in 1:length(alignments)) {    
     
@@ -35,33 +33,30 @@ function(transcript, coordinates, annotation, riboData, length = 27, frameShift 
       tabzz <- rep(0, ceiling(transceiling / 3) * 3)
       tabzz[as.numeric(names(tabz))] <- tabz  
       matz <- matrix(tabzz, nrow = 3);
-      colnames(matz) <- (1:(ceiling(transceiling / 3) * 3))[1:(ceiling(transceiling / 3)) * 3 - 2]
+      colnames(matz) <- (1:(ceiling(transceiling / 3) * 3))[1:(ceiling(transceiling / 3)) * 3 - 2] + 1
       matz
     }
     
     matz <- createMat(allen)
     if(!missing(cap)) matz[matz > cap] <- cap
 #    if(ii < length(alignments)) colnames(matz) <- NULL
-    if(missing(baseLim))
-      baseLim <- c(0, ncol(matz) * 3)
-#      baseLim <- c(0, ceiling(fastalens[as.character(fastalens[,1]) == as.character(transcript),2]))
+    if(missing(xlim))
+      xlim <- c(0, ncol(matz) * 3)
 
     if(length(riboData@rnaGR) > 0) {      
       covmRNA <- riboData@rnaGR[[ii]]
       cov <- coverage(covmRNA[which(as.character(seqnames(covmRNA)) == transcript)])
       cov <- as.integer(cov[[which(names(cov) == transcript)]])      
     } else cov <- 0
-
     
-
     if(!missing(riboScale)) maxribo <- riboScale[ii] else maxribo <- max(matz)
     if(!missing(rnaScale)) maxrna <- rnaScale[ii] else maxrna <- max(cov)
     if(missing(main)) main = paste(names(alignments)[ii], " :: ", transcript, sep = "")
     ymax <- max(pretty(0:maxribo))
     
-    plot(NA, NA, axes = FALSE, ylim = c(0, ymax * c(1, 1.2)[as.integer(ii == 1) + 1]), xlim = c(floor(baseLim[1] / 3 * 4), ceiling(baseLim[2] / 3 * 4)), xlab = "", ylab = "")
-        
-    bp <- barplot(matz, beside = TRUE, border = c("red", "green", "blue"), col = c("red", "green", "blue"), main = main, axes = FALSE, ylim = c(0, ymax * c(1, 1.2)[as.integer(ii == 1) + 1]), xlim = c(floor(baseLim[1] / 3 * 4), ceiling(baseLim[2] / 3 * 4)), add = TRUE, plot = FALSE)
+    plot(NA, NA, axes = FALSE, ylim = c(0, ymax * c(1, 1.2)[as.integer(ii == 1) + 1]), xlim = c(floor(xlim[1]), ceiling(xlim[2])), xlab = "", ylab = "")
+
+    bp <- barplot(matz, beside = TRUE, plot = FALSE, space = c(0,1), width = 0.75, xlim = xlim)
 
     if(length(riboData@rnaGR) > 0) {      
       pretcov <- pretty(0:maxrna)
@@ -70,7 +65,9 @@ function(transcript, coordinates, annotation, riboData, length = 27, frameShift 
       rect(as.vector(bp)[1:length(cov)] - 0.5, 0, as.vector(bp)[1:length(cov)] + 0.5, cov, col = "light grey", border = "light grey")
     }
 
-    bp <- barplot(matz, beside = TRUE, border = c("red", "green", "blue"), col = c("red", "green", "blue"), main = main, axes = FALSE, ylim = c(0, ymax * c(1, 1.2)[as.integer(ii == 1) + 1]), xlim = c(floor(baseLim[1] / 3 * 4), ceiling(baseLim[2] / 3 * 4)), add = TRUE, plot = TRUE, ...)
+    bp <- barplot(matz, beside = TRUE, border = c("red", "green", "blue"), col = c("red", "green", "blue"), main = main, axes = FALSE, ylim = c(0, ymax * c(1, 1.2)[as.integer(ii == 1) + 1]), 
+                  xlim = c(floor(xlim[1] / 3 * 3), ceiling(xlim[2] / 3 * 3)),
+                  add = TRUE, plot = TRUE, space = c(0,1), width = 0.75)
     
     if(ii == 1 & !missing(annotation)) {
       rect(xleft = as.vector(bp)[start(annotation)], xright = as.vector(bp)[end(annotation)], ybottom = ymax *1.1, ytop = ymax * 1.15, col = "turquoise")    
