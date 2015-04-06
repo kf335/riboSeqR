@@ -79,9 +79,10 @@ function(transcript, coordinates, annotation, riboData, length = 27, frameShift 
     
     if(!missing(coordinates)) {
       if(is.list(coordinates)) tw <- coordinates[[ii]][seqnames(coordinates[[ii]]) == transcript,] else tw <- coordinates[seqnames(coordinates) == transcript,]
-      if(length(tw) > 0)
+      if(length(tw) > 0) {
         segcols <- rgb(c(0.8,0,0), c(0,0.8,0), c(0,0,0.8), alpha = 0.8)
         segments(as.vector(bp)[start(tw)] - 1, ymax * (1.015 + ((start(tw) - 1) %% 3) * 0.005), as.vector(bp)[end(tw)] - 1, ymax * (1.015 + ((start(tw) - 1) %% 3) * 0.005), col = segcols[1 + ((start(tw) - 1) %% 3)], lwd = 3)
+      }
     }  
   }
   NULL
