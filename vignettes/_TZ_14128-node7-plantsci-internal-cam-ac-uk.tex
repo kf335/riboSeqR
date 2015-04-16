@@ -1,0 +1,94 @@
+%\VignetteIndexEntry{riboSeq}
+%\VignettePackage{riboSeq}
+
+\documentclass[a4paper]{article}
+
+%\usepackage{rotating}
+
+\title{riboSeq}
+\author{Thomas J. Hardcastle}
+
+\begin{document}
+
+\maketitle
+
+Load the riboSeq library.
+
+<<>>=
+  library(riboSeq)
+@
+
+Set the working directory to the data directory.
+
+<<>>=
+setwd(system.file("extdata", package = "riboSeq"))
+@ 
+
+The \verb'fastaCDS' function can be used to guess at potential coding sequences from a fasta file containing mRNA transcripts (note; do not use this on a genome!). These can also be loaded into a GRanges object from an annotation file.
+
+<<>>=
+fastaCDS <- findCDS(fastaFile = "rsem_chlamy236_deNovo.transcripts.fa", startCodon = c("ATG"), stopCodon = c("TAG", "TAA", "TGA"))
+@ 
+
+The aligned ribosomal (and RNA) data can be read in using the \verb'readRibodata' function. These will probably have been created with a bowtie process along the lines of ``bowtie -p 4 --norc -k 100 --suppress 1,6,7,8 chlamy236_plus_deNovo 17_trimmed_filtered.fq  chlamy236_plus_deNovo_plusOnly_Index17''. Using this ``--suppress'' option will give the minimal data required for \verb'riboSeq' and the correct columns specification for the default \verb'readRibodata' function parameters.
+
+<<>>=
+ribofiles <- paste("chlamy236_plus_deNovo_plusOnly_Index", c(17,3,5,7), sep = "")
+rnafiles <- paste("chlamy236_plus_deNovo_plusOnly_Index", c(10,12,14,16), sep = "")
+
+riboDat <- readRibodata(ribofiles, rnafiles, replicates = c("WT", "WT", "M", "M"))
+@ 
+
+The alignments can be assigned to frames relative to the coding coordinates with the \verb'frameCounting' function.
+
+<<>>=
+fCs <- frameCounting(riboDat, fastaCDS)
+@ 
+
+These can be filtered on the mean number of hits and unique hits within replicate groups to give plausible candidates for coding.
+
+<<>>=
+ffCs <- filterHits(fCs, hitMean = 50, unqhitMean = 10)
+@ 
+
+The estimated frame shifts, relative to coding start, can be estimated from the frame calling (or from a set of coordinates and alignment data) for each n-mer. The weighting decribes the proportion of n-mers fitting with the most likely frameshift.
+<<>>=
+frameShift(rC = ffCs) 
+@ 
+
+We can plot the total alignment at the 5' and 3' ends of coding sequences using the \verb'plotCDS' function. The frames are colour coded; frame-0 is red, frame-1 is green, frame-2 is blue. 
+<<>>=
+plotCDS(coordinates = ffCs@CDS, riboDat = riboDat, lengths = 27)
+@ 
+
+Note the frameshift for 28-mers.
+<<>>=
+plotCDS(coordinates = ffCs@CDS, riboDat = riboDat, lengths = 28)
+@ 
+
+
+We can plot the alignment over an individual transcript sequence using the \verb'plotTranscript' function.
+<<>>=
+
+@ 
+
+\end{document}
+
+
+<<>>=
+names <- NULL
+for(ff in rnafiles) {
+  rdat <- read.delim(ff, as.is = TRUE, header = FALSE)
+  if(is.null(names)) {
+    tabdat <- table(rdat[,2])
+    names <- sample(names(tabdat[tabdat >= 1e2 & tabdat < 1e4]), 50)
+  }
+  rdat <- rdat[rdat[,2] %in% names,]
+  write.table(rdat, file = ff, sep = "\t", row.names = FALSE, col.names = FALSE)
+}
+  
+@ 
+
+
+z <- scan("~/Code/Betty_ribosome_3/rsem_chlamy236_deNovo.transcripts.fa", what = "character")
+znam <- which(gsub(">", "", z[grep(">", z)]) %in% names)
