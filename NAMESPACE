@@ -1,0 +1,5 @@
+import("methods")
+import("GenomicRanges")
+import("abind")
+exportMethods("dim", "[", "show")
+export("readRibodata", "findCDS", "frameCounting", "readingFrame", "filterHits", "plotCDS", "plotTranscript", "sliceCounts", "rnaCounts", "plotFS", "lengthDist")
