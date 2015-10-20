@@ -1,4 +1,4 @@
-plotCDS <- function(coordinates, riboDat, lengths = 27, min5p = -20, max5p = 200, min3p = -200, max3p = 20, cap, main = "", plot = TRUE) {
+plotCDS <- function(coordinates, riboDat, lengths = 27, min5p = -20, max5p = 200, min3p = -200, max3p = 20, cap, main = "", plot = TRUE, ...) {
 
   min5p <- floor(min5p / 3) * 3; max5p <- (ceiling(max5p / 3) * 3) - 1
   min3p <- floor(min3p / 3) * 3; max3p <- (ceiling(max3p / 3) * 3) - 1
@@ -47,16 +47,16 @@ plotCDS <- function(coordinates, riboDat, lengths = 27, min5p = -20, max5p = 200
       if(!is.null(cap)) matz[matz > cap] <- cap
       
       if(plot) {
-        bw <- barplot(matz, beside = TRUE, col = rainbow(3, s = 0.7), border = rainbow(3, s = 0.7), main = main, ylim = c(0, max(matz, na.rm = TRUE)), axisnames = FALSE, space = c(0, 0.25), ylab = "Mean number of reads", xlab = "Base position relative to CDS")        
+        bw <- barplot(matz, beside = TRUE, col = rainbow(3, s = 0.7), border = rainbow(3, s = 0.7), main = main, ylim = c(0, max(matz, na.rm = TRUE)), axisnames = FALSE, space = c(0, 0.25), ylab = "Mean number of reads", xlab = "Base position relative to CDS",...)        
         if(min5p < max5p) {
           pretty5p <- pretty(min5p:max5p); pretty5p <- pretty5p[pretty5p >= min5p]; pretty5p <- pretty5p[pretty5p <= max5p]; pretty5p <- unique(pretty5p)
           prettystart <- pretty5p; prettystart[prettystart == 0] <- "start"
-          axis(side = 1, at = as.vector(bw)[(pretty5p - min5p + 1)], labels = prettystart, lwd = 0, lwd.ticks = 1)
+          axis(side = 1, at = as.vector(bw)[(pretty5p - min5p + 1)], labels = prettystart, lwd = 0, lwd.ticks = 1, ...)
         }
         if(min3p < max3p) {
           pretty3p <- pretty(min3p:max3p); pretty3p <- pretty3p[pretty3p >= min3p]; pretty3p <- pretty3p[pretty3p <= max3p]; pretty3p <- unique(pretty3p)
           prettystop <- pretty3p; prettystop[prettystop == 0] <- "stop"
-          axis(side = 1, at = as.vector(bw[,max(which(is.na(matz[1,])) + 1):ncol(bw)])[pretty3p - min3p + 1], labels = prettystop, lwd = 0, lwd.ticks = 1)
+          axis(side = 1, at = as.vector(bw[,max(which(is.na(matz[1,])) + 1):ncol(bw)])[pretty3p - min3p + 1], labels = prettystop, lwd = 0, lwd.ticks = 1, ...)
         }
         
       }

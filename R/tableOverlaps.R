@@ -2,12 +2,12 @@
 function(grf, gral, uniqueHits = FALSE, lengthRange = 25:30) {
   #gral.f <- gral[gral$frame == frame]
   gral <- gral[width(gral) %in% lengthRange]
-  spl27.f <- split(start(gral), factor(as.character(seqnames(gral)), levels = as.character(seqnames(grf))))
-  spl27.frame <- split(gral$frame, factor(as.character(seqnames(gral)), levels = as.character(seqnames(grf))))
-  spl27.length <- split(width(gral), factor(as.character(seqnames(gral)), levels = as.character(seqnames(grf))))
+  spl27.f <- split(start(gral), factor(as.character(seqnames(gral)), levels = seqlevels(grf)))
+  spl27.frame <- split(gral$frame, factor(as.character(seqnames(gral)), levels = seqlevels(grf)))
+  spl27.length <- split(width(gral), factor(as.character(seqnames(gral)), levels = seqlevels(grf)))
   
-  splfr0 <- split(start(grf), factor(as.character(seqnames(grf)), levels = as.character(seqnames(grf))))
-  splfr0e <- split(end(grf), factor(as.character(seqnames(grf)), levels = as.character(seqnames(grf))))  
+  splfr0 <- split(start(grf), factor(as.character(seqnames(grf)), levels = (seqlevels(grf))))
+  splfr0e <- split(end(grf), factor(as.character(seqnames(grf)), levels = (seqlevels(grf))))  
   tov <- lapply(1:length(spl27.f), function(ii) {
     if(length(splfr0[[ii]]) > 0) {      
       z <- data.frame(startCDS = findInterval(spl27.f[[ii]], splfr0[[ii]]), endCDS = findInterval(spl27.f[[ii]], splfr0e[[ii]]), start = spl27.f[[ii]], frame = spl27.frame[[ii]], length = spl27.length[[ii]])

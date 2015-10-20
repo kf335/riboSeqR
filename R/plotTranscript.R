@@ -56,7 +56,7 @@ function(transcript, coordinates, annotation, riboData, length = 27, frameShift 
     
     plot(NA, NA, axes = FALSE, ylim = c(0, ymax * c(1, 1.2)[as.integer(ii == 1) + 1]), xlim = c(floor(xlim[1]), ceiling(xlim[2])), xlab = "", ylab = "")
 
-    bp <- barplot(matz, beside = TRUE, plot = FALSE, space = c(0,1), width = 0.75, xlim = xlim)
+    bp <- barplot(matz, beside = TRUE, plot = FALSE, space = c(0,1), width = 0.75, xlim = xlim, ...)
 
     if(length(riboData@rnaGR) > 0) {      
       pretcov <- pretty(0:maxrna)
@@ -70,8 +70,8 @@ function(transcript, coordinates, annotation, riboData, length = 27, frameShift 
                   add = TRUE, plot = TRUE, space = c(0,1), width = 0.75)
     
     if(ii == 1 & !missing(annotation)) {
-      rect(xleft = as.vector(bp)[start(annotation)], xright = as.vector(bp)[end(annotation)], ybottom = ymax *1.1, ytop = ymax * 1.15, col = "turquoise")    
-      suppressWarnings(text(x = mean(as.vector(bp)[c(start(annotation), end(annotation))]), y = ymax * (1.15 + 1.1) / 2, labels = seqnames(annotation), ...))
+      rect(xleft = as.vector(bp)[start(annotation)], xright = as.vector(bp)[end(annotation)], ybottom = ymax *1.1, ytop = ymax * 1.2, col = "turquoise", border = "turquoise")    
+      suppressWarnings(text(x = mean(as.vector(bp)[c(start(annotation), end(annotation))]), y = ymax * (1.1 + 1.2) / 2, labels = seqnames(annotation), ...))
     }
     
     suppressWarnings(axis(side = 2, pretty(0:ymax), ...))

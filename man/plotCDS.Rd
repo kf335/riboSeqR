@@ -14,7 +14,7 @@ relative to start codon.
 }
 \usage{
 plotCDS(coordinates, riboDat, lengths = 27, min5p = -20, max5p = 200,
-min3p = -200, max3p = 20, cap, main = "", plot = TRUE)
+min3p = -200, max3p = 20, cap, main = "", plot = TRUE, ...)
 }
 \arguments{
   \item{coordinates}{
@@ -48,7 +48,10 @@ min3p = -200, max3p = 20, cap, main = "", plot = TRUE)
   \item{plot}{
     Should the acquired matrix of mean expression be plotted? Defaults
     to TRUE.
-}
+  }
+  \item{...}{
+    Additional arguments to be passed to 'plot' and 'axes'.
+  }
 }
 
 \value{

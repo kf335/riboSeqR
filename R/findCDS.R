@@ -26,5 +26,10 @@ function(fastaFile, startCodon = c("ATG"), stopCodon = c("TAG", "TAA", "TGA"))
 
     gr <- c(fr0GR, fr1GR, fr2GR)
     gr <- gr[order(as.integer(seqnames(gr)), start(gr), end(gr))]
+    gr$startCodon <- substring(fastaSeq[as.integer(match(seqnames(gr), fastaHeads))], start(gr), start(gr) + 2)
+    gr$stopCodon <- substring(fastaSeq[as.integer(match(seqnames(gr), fastaHeads))], end(gr) - 2, end(gr))
+    gr$context <- substring(fastaSeq[as.integer(match(seqnames(gr), fastaHeads))], start(gr) - 3, start(gr) + 3)
+    gr$minus3 <- substring(fastaSeq[as.integer(match(seqnames(gr), fastaHeads))], start(gr) - 3, start(gr) - 3)
+    gr$plus1 <- substring(fastaSeq[as.integer(match(seqnames(gr), fastaHeads))], start(gr) + 3, start(gr) + 3)
     gr
   }
