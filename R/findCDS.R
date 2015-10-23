@@ -6,7 +6,7 @@ function(fastaFile, startCodon = c("ATG"), stopCodon = c("TAG", "TAA", "TGA"))
     headloc <- grep(">", fasta)
     fastaSeq <- sapply(1:length(headloc), function(ii) toupper(paste(fasta[(headloc[ii] + 1):c(headloc[-1] - 1, length(fasta))[ii]], collapse = "")))
     
-    codpos <- paste("(", paste(startCodon, collapse = "|"), " )(.{3} )*?(", paste(stopCodon, collapse = "|"), "|.{0,2}$)", sep = "")
+    codpos <- paste("(", paste(startCodon, collapse = " |"), " )(.{3} )*?(", paste(stopCodon, collapse = "|"), "|.{0,2}$)", sep = "")
     frame0 <- gregexpr(codpos, gsub("(.{3})", "\\1 ", fastaSeq))
     frame1 <- gregexpr(codpos, gsub("(.{3})", "\\1 ", substr(fastaSeq, 2, nchar(fastaSeq))))
     frame2 <- gregexpr(codpos, gsub("(.{3})", "\\1 ", substr(fastaSeq, 3, nchar(fastaSeq))))
