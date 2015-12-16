@@ -8,9 +8,9 @@
 \title{riboSeqR}
 \author{Thomas J. Hardcastle, Betty Y.W. Chung}
 
-\RequirePackage{/home/bioinf/tjh48/R/x86_64-unknown-linux-gnu-library/3.1/BiocStyle/resources/latex/Bioconductor}
+\RequirePackage{/applications/R/R-3.2.0/library/BiocStyle/resources/latex/Bioconductor}
 
-\AtBeginDocument{\bibliographystyle{/home/bioinf/tjh48/R/x86_64-unknown-linux-gnu-library/3.1/BiocStyle/resources/latex/unsrturl}}
+\AtBeginDocument{\bibliographystyle{/applications/R/R-3.2.0/library/BiocStyle/resources/latex/unsrturl}}
 \usepackage{Sweave}
 \begin{document}
 
@@ -20,7 +20,7 @@
 
 \section*{Introduction}
 
-Ribosome profiling extracts those parts of a coding sequence currently bound by a ribosome (and thus, are likely to be undergoing translation). Ribosomes typically cover between 20-30 bases of the mRNA (dependant on conformational changes) and move along the mRNA three bases at a time. Sequenced reads of a given length are thus likely to lie predominantly in a single frame relative to the start codon of the coding sequence. This package presents a set of methods for parsing ribosomal profiling data from multiple samples and aligned to coding sequences, inferring frameshifts, and plotting the average and transcript-specific behaviour of these data. Methods are also provided for extracting the data in a suitable form for differential translation analysis.
+Ribosome profiling extracts those parts of a coding sequence currently bound by a ribosome (and thus, are likely to be undergoing translation). Ribosomes typically cover between 20-30 bases of the mRNA (dependant on conformational changes) and move along the mRNA three bases at a time. Sequenced reads of a given length are thus likely to lie predominantly in a single frame relative to the start codon of the coding sequence. This package presents a set of methods for parsing ribosomal profiling data from multiple samples and aligned to coding sequences, inferring frameshifts, and plotting the average and transcript-specific behaviour of these data. Methods are also provided for extracting the data in a suitable form for differential translation analysis. For a fuller description of these methods and further examples of their use, see Chung \& Hardcastle \textsl{et al} (2015) \cite{chung}.
 
 \section*{Getting Data}
 
@@ -249,27 +249,32 @@ These data may be used in an analysis of differential translation through compar
 > sessionInfo()
 \end{Sinput}
 \begin{Soutput}
-R version 3.1.2 (2014-10-31)
+R version 3.2.0 (2015-04-16)
 Platform: x86_64-unknown-linux-gnu (64-bit)
+Running under: Debian GNU/Linux 8 (jessie)
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8       
- [4] LC_COLLATE=en_US.UTF-8     LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
-[10] LC_TELEPHONE=C             LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C               LC_TIME=en_GB.UTF-8       
+ [4] LC_COLLATE=en_GB.UTF-8     LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+ [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
+[10] LC_TELEPHONE=C             LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats4    parallel  stats     graphics  grDevices utils     datasets  methods  
 [9] base     
 
 other attached packages:
-[1] baySeq_2.1.18         perm_1.0-0.0          riboSeqR_1.0.2       
-[4] abind_1.4-0           GenomicRanges_1.17.48 GenomeInfoDb_1.1.26  
-[7] IRanges_1.99.32       S4Vectors_0.2.8       BiocGenerics_0.11.5  
+[1] baySeq_2.5.2         perm_1.0-0.0         riboSeqR_1.2.0       abind_1.4-3         
+[5] GenomicRanges_1.20.5 GenomeInfoDb_1.4.1   IRanges_2.2.4        S4Vectors_0.6.0     
+[9] BiocGenerics_0.14.0 
 
 loaded via a namespace (and not attached):
-[1] BiocStyle_1.3.15 tools_3.1.2      XVector_0.5.8   
+[1] compiler_3.2.0  BiocStyle_1.6.0 XVector_0.8.0   tools_3.2.0    
 \end{Soutput}
 \end{Schunk}
+
+\begin{thebibliography}{99}
+\bibitem{chung} BY Chung and TJ Hardcastle and JD Jones and N Irigoyen and AE Firth and DC Baulcombe and I Brierley \textsl{The use of duplex-specific nuclease in ribosome profiling and a user-friendly software package for Ribo-seq data analysis.} RNA (2015).
+\end{thebibliography}
 
 \end{document}

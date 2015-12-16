@@ -20,7 +20,7 @@ BiocStyle::latex()
 
 \section*{Introduction}
 
-Ribosome profiling extracts those parts of a coding sequence currently bound by a ribosome (and thus, are likely to be undergoing translation). Ribosomes typically cover between 20-30 bases of the mRNA (dependant on conformational changes) and move along the mRNA three bases at a time. Sequenced reads of a given length are thus likely to lie predominantly in a single frame relative to the start codon of the coding sequence. This package presents a set of methods for parsing ribosomal profiling data from multiple samples and aligned to coding sequences, inferring frameshifts, and plotting the average and transcript-specific behaviour of these data. Methods are also provided for extracting the data in a suitable form for differential translation analysis.
+Ribosome profiling extracts those parts of a coding sequence currently bound by a ribosome (and thus, are likely to be undergoing translation). Ribosomes typically cover between 20-30 bases of the mRNA (dependant on conformational changes) and move along the mRNA three bases at a time. Sequenced reads of a given length are thus likely to lie predominantly in a single frame relative to the start codon of the coding sequence. This package presents a set of methods for parsing ribosomal profiling data from multiple samples and aligned to coding sequences, inferring frameshifts, and plotting the average and transcript-specific behaviour of these data. Methods are also provided for extracting the data in a suitable form for differential translation analysis. For a fuller description of these methods and further examples of their use, see Chung \& Hardcastle \textsl{et al} (2015) \cite{chung}.
 
 \section*{Getting Data}
 
@@ -174,5 +174,9 @@ topCounts(pD, "DT", normaliseData = TRUE)
 <<>>=
 sessionInfo()
 @ 
+
+\begin{thebibliography}{99}
+\bibitem{chung} BY Chung and TJ Hardcastle and JD Jones and N Irigoyen and AE Firth and DC Baulcombe and I Brierley \textsl{The use of duplex-specific nuclease in ribosome profiling and a user-friendly software package for Ribo-seq data analysis.} RNA (2015).
+\end{thebibliography}
 
 \end{document}
