@@ -1,0 +1,16 @@
+16	16	RNA	M2	2
+15	15	RNA	M2	1
+14	14	RNA	M1	2
+13	13	RNA	M1	1
+12	12	RNA	W2	2
+11	11	RNA	W2	1
+10	10	RNA	W1	2
+9	9	RNA	W1	1
+8	8	Ribo	M2	2
+7	7	Ribo	M2	1
+6	6	Ribo	M1	2
+5	5	Ribo	M1	1
+4	4	Ribo	W2	2
+3	3	Ribo	W2	1
+2	2	Ribo	W1	2
+17	1	Ribo	W1	1
